@@ -1,21 +1,24 @@
 package hello.core.order;
 
-import hello.core.Member.Member;
-import hello.core.Member.MemberRepository;
-import hello.core.Member.MemoryMemberRepository;
+import hello.core.member.Member;
+import hello.core.member.MemberRepository;
 import hello.core.discount.DiscountPolicy;
-import hello.core.discount.FixdiscountPolicy;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
-public class OrderServiceImpl implements OrderService{
-    private  final MemberRepository memberRepository = new MemoryMemberRepository();
-    private final DiscountPolicy discountPolicy = new FixdiscountPolicy();
+@Component
+@RequiredArgsConstructor
+public class OrderServiceImpl implements OrderService {
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+
 
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
         Member member = memberRepository.findById(memberId);
-        int dicountPrice = discountPolicy.dicount(member, itemPrice);
-
-        return  new Order(memberId, itemName, itemPrice, dicountPrice);
-
+        int discountPrice = discountPolicy.discount(member, itemPrice);
+        return new Order(memberId, itemName, itemPrice, discountPrice);
     }
 }
